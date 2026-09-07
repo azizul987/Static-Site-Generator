@@ -1,15 +1,18 @@
 from textnode import TextNode,TextType
 import os
 import shutil
-from nodes_delimite import generate_page, generate_pages_recursive
+import sys
+from nodes_delimite import generate_page
 
 def main():
+    basepath = sys.argv[1] if len(sys.argv) > 1 else "/"
     source="static"
-    dest="public"
+    dest="docs"
     if os.path.exists(dest):
         shutil.rmtree(dest)
     copy_files_recursive(source, dest)
-    generate_pages_recursive("content", "template.html", "public")
+    generate_pages_recursive("content", "template.html", "docs", basepath)
+
 def copy_files_recursive(source, dest):
     if os.path.exists(dest):
         shutil.rmtree(dest)
@@ -23,15 +26,15 @@ def copy_files_recursive(source, dest):
             shutil.copy(src_path, dest_path)
         print(f"Copied {src_path} to {dest_path}")
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     for filename in os.listdir(dir_path_content):
         from_path = os.path.join(dir_path_content, filename)
         dest_path = os.path.join(dest_dir_path, filename)
         if os.path.isfile(from_path):
             if from_path.endswith(".md"):
                 dest_path = dest_path[:-3] + ".html"
-                generate_page(from_path, template_path, dest_path)
+                generate_page(from_path, template_path, dest_path, basepath)
         else:
-            generate_pages_recursive(from_path, template_path, dest_path)
+            generate_pages_recursive(from_path, template_path, dest_path, basepath)
 
 main()
