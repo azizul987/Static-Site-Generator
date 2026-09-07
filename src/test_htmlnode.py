@@ -1,7 +1,7 @@
 from htmlnode import HtmlNode, LeafNode
 from nodes_delimite import split_nodes_delimiter
 from R import extract_markdown_images, extract_markdown_links
-from nodes_delimite import split_nodes_image, split_nodes_link, text_to_textnodes, markdown_to_blocks, block_to_block_type
+from nodes_delimite import split_nodes_image, split_nodes_link, text_to_textnodes, markdown_to_blocks, block_to_block_type, extract_title
 def test_htmlnode():
     node = HtmlNode("div", "Hello, World!", None, None)
     assert node.to_html() == "<div>Hello, World!</div>"
@@ -181,4 +181,13 @@ the **same** even with inline stuff
     self.assertEqual(
         html,
         "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
+    )
+
+def test_extract_title(self):
+    md = """
+# Hello, World!
+"""
+    self.assertEqual(
+        extract_title(md),
+        "Hello, World!",
     )
