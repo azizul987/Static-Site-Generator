@@ -1,3 +1,4 @@
+import os
 import re
 from enum import Enum
 
@@ -197,5 +198,18 @@ def generate_page(from_path, template_path, dest_path):
     html = markdown_to_html_node(markdown).to_html()
     template = template.replace("{{ Title }}", title)
     template = template.replace("{{ Content }}", html)
+    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
     with open(dest_path, "w") as f:
         f.write(template)
+
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    for filename in os.listdir(dir_path_content):
+        from_path = os.path.join(dir_path_content, filename)
+        dest_path = os.path.join(dest_dir_path, filename)
+        if os.path.isfile(from_path):
+            if from_path.endswith(".md"):
+                dest_path = dest_path[:-3] + ".html"
+                generate_page(from_path, template_path, dest_path)
+        else:
+            generate_pages_recursive(from_path, template_path, dest_path)
+
